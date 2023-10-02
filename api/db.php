@@ -1,9 +1,9 @@
 <?php
 function db($query) {
-    $dbHost = 'seu_host';
-    $dbUser = 'seu_usuario';
-    $dbPass = 'sua_senha';
-    $dbName = 'seu_banco_de_dados';
+    $dbHost = 'localhost';
+    $dbUser = 'id19623577_pedroaf0';
+    $dbPass = '33551047pP';
+    $dbName = 'id19623577_ufpel';
 
     $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 
