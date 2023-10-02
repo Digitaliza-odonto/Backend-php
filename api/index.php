@@ -85,10 +85,52 @@ switch ($rota) {
             break;
         
 
-    case '/pacientes/consultar':
-        // Rota para consultar pacientes
-        // ... Seu código de consulta de pacientes aqui ...
-        break;
+            case '/pacientes/consultar':
+                // Verifica se a solicitação é um POST
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    // Obtenha os dados da solicitação JSON
+                    $data = json_decode(file_get_contents('php://input'), true);
+            
+                    // Verifique se o campo de consulta (CPF ou Nome) foi fornecido
+                    if (isset($data['CPF']) || isset($data['Nome'])) {
+                        $query = "SELECT * FROM pacientes WHERE";
+            
+                        if (isset($data['CPF'])) {
+                            $query .= " CPF = '" . $data['CPF'] . "'";
+                        }
+            
+                        if (isset($data['CPF']) && isset($data['Nome'])) {
+                            $query .= " OR";
+                        }
+            
+                        if (isset($data['Nome'])) {
+                            $query .= " Nome LIKE '%" . $data['Nome'] . "%'";
+                        }
+            
+                        // Execute a consulta no banco de dados (substitua pela sua lógica)
+                        $result = db($query);
+            
+                        if ($result->num_rows > 0) {
+                            $pacientes = array();
+                            while ($row = $result->fetch_assoc()) {
+                                $pacientes[] = $row;
+                            }
+                            echo json_encode($pacientes);
+                        } else {
+                            echo json_encode(array("message" => "Nenhum paciente encontrado."));
+                        }
+                    } else {
+                        // Campos de consulta ausentes
+                        http_response_code(400);
+                        echo json_encode(array("error" => "Informe CPF ou Nome para consulta."));
+                    }
+                } else {
+                    // Método de solicitação inválido
+                    http_response_code(405);
+                    echo json_encode(array("error" => "Método de solicitação inválido. Use POST."));
+                }
+                break;
+            
 
     case '/pacientes/atualizar':
         // Rota para atualizar pacientes
